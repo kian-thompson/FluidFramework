@@ -8,6 +8,7 @@ import winston from "winston";
 import safeStringify from "json-stringify-safe";
 import type * as resources from "@fluidframework/gitresources";
 import { NetworkError } from "@fluidframework/server-services-client";
+import { serializeError } from "serialize-error";
 import * as helpers from "./helpers";
 import * as conversions from "./isomorphicgitConversions";
 import {
@@ -347,16 +348,22 @@ export class IsomorphicGitManagerFactory implements IRepositoryManagerFactory {
     ) { }
 
     public async create(owner: string, name: string): Promise<IsomorphicGitRepositoryManager> {
+        console.log("[GITREST DEBUG][isomorphic-git] Creating repo for isogit manager");
         // Verify that both inputs are valid folder names
         const repoPath = helpers.getRepoPath(owner, name);
         const directoryPath = `${this.baseDir}/${repoPath}`;
 
-        // Create and then cache the repository
-        await isomorphicGit.init({
-            fs: this.fileSystemManager,
-            gitdir: `${this.baseDir}/${repoPath}`,
-            bare: true,
-        });
+        try {
+            // Create and then cache the repository
+            await isomorphicGit.init({
+                fs: this.fileSystemManager,
+                gitdir: `${this.baseDir}/${repoPath}`,
+                bare: true,
+            });
+        } catch (error) {
+            console.log("[GITREST DEBUG][isomorphic-git] Error calling init: ", serializeError(error));
+            throw error;
+        }
 
         this.repositoryCache.add(repoPath);
         const repoManager = new IsomorphicGitRepositoryManager(

@@ -17,6 +17,7 @@ export function create(store: nconf.Provider, repoManagerFactory: IRepositoryMan
      */
     router.post("/:owner/repos", (request, response, next) => {
         const createParams = request.body as ICreateRepoParams;
+        console.log("[GITREST DEBUG] Starting POST owner/repos - create repos");
         if (!createParams || !createParams.name) {
             return response.status(400).json("Invalid repo name");
         }

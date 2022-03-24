@@ -338,6 +338,7 @@ export class NodegitRepositoryManagerFactory implements IRepositoryManagerFactor
     }
 
     public async create(owner: string, name: string): Promise<NodegitRepositoryManager> {
+        console.log("[GITREST DEBUG][nodegit] Creating repo for nodegit manager");
         // Verify that both inputs are valid folder names
         const repoPath = helpers.getRepoPath(owner, name);
 
