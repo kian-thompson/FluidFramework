@@ -35,7 +35,7 @@ describe("runWithRetry Tests", () => {
             "test",
             logger,
             {
-                onRetry: () => { emitDelayInfoTimes += 1; },
+                retry: () => { emitDelayInfoTimes += 1; },
             },
             ));
         assert.strictEqual(retryTimes, 0, "Should succeed at first time");
@@ -64,7 +64,7 @@ describe("runWithRetry Tests", () => {
             "test",
             logger,
             {
-                onRetry: () => { emitDelayInfoTimes += 1; },
+                retry: () => { emitDelayInfoTimes += 1; },
             },
         ));
         assert.strictEqual(retryTimes, 0, "Should keep retrying until success");
@@ -176,7 +176,7 @@ describe("runWithRetry Tests", () => {
                 "test",
                 logger,
                 {
-                    onRetry: () => { throw new Error("disposed"); },
+                    retry: () => { throw new Error("disposed"); },
                 },
             ));
             assert.fail("Should not succeed");

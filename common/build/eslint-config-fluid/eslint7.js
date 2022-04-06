@@ -139,12 +139,7 @@ module.exports = {
         "@typescript-eslint/strict-boolean-expressions": "error",
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
-        "@typescript-eslint/unbound-method": [
-            "error",
-            {
-                "ignoreStatic": true
-            }
-        ],
+        "@typescript-eslint/unbound-method": "off",
         "@typescript-eslint/unified-signatures": "error",
 
         // eslint-plugin-eslint-comments

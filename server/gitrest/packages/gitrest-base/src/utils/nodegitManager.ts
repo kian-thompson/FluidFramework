@@ -16,8 +16,7 @@ import {
     GitObjectType,
     IExternalWriterConfig,
     IRepositoryManager,
-    IFileSystemManagerFactory,
-    IRepoManagerParams,
+    IFileSystemManager,
 } from "./definitions";
 
 export class NodegitRepositoryManager implements IRepositoryManager {
@@ -333,14 +332,15 @@ export class NodegitRepositoryManagerFactory implements IRepositoryManagerFactor
 
     constructor(
         private readonly baseDir: string,
-        private readonly fileSystemManagerFactory: IFileSystemManagerFactory,
+        private readonly fileSystemManager: IFileSystemManager,
         private readonly externalStorageManager: IExternalStorageManager,
     ) {
     }
 
-    public async create(params: IRepoManagerParams): Promise<NodegitRepositoryManager> {
+    public async create(owner: string, name: string): Promise<NodegitRepositoryManager> {
         // Verify that both inputs are valid folder names
-        const repoPath = helpers.getRepoPath(params.repoOwner, params.repoName);
+        const repoPath = helpers.getRepoPath(owner, name);
+
         // Create and then cache the repository
         const isBare = 1;
         const repositoryP = nodegit.Repository.init(`${this.baseDir}/${repoPath}`, isBare);
@@ -348,23 +348,22 @@ export class NodegitRepositoryManagerFactory implements IRepositoryManagerFactor
 
         const repository = await this.repositoryPCache[repoPath];
         const repoManager = new NodegitRepositoryManager(
-            params.repoOwner,
-            params.repoName,
+            owner,
+            name,
             repository,
             this.externalStorageManager);
-        winston.info(`Created a new repo for owner ${params.repoOwner} reponame: ${params.repoName}`);
+        winston.info(`Created a new repo for owner ${owner} reponame: ${name}`);
 
         return repoManager;
     }
 
-    public async open(params: IRepoManagerParams): Promise<NodegitRepositoryManager> {
-        const repoPath = helpers.getRepoPath(params.repoOwner, params.repoName);
+    public async open(owner: string, name: string): Promise<NodegitRepositoryManager> {
+        const repoPath = helpers.getRepoPath(owner, name);
 
         if (!(repoPath in this.repositoryPCache)) {
             const directory = `${this.baseDir}/${repoPath}`;
 
-            const repoExists = await helpers.exists(
-                this.fileSystemManagerFactory.create(params.fileSystemManagerParams), directory);
+            const repoExists = await helpers.exists(this.fileSystemManager, directory);
             if (!repoExists) {
                 winston.info(`Repo does not exist ${directory}`);
                 // services-client/getOrCreateRepository depends on a 400 response code
@@ -376,8 +375,8 @@ export class NodegitRepositoryManagerFactory implements IRepositoryManagerFactor
 
         const repository = await this.repositoryPCache[repoPath];
         const repoManager = new NodegitRepositoryManager(
-            params.repoOwner,
-            params.repoName,
+            owner,
+            name,
             repository,
             this.externalStorageManager);
         return repoManager;

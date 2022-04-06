@@ -47,11 +47,9 @@ export class LoaderContainerTracker implements IOpProcessingController {
                 return container;
             };
         };
-        /* eslint-disable @typescript-eslint/unbound-method */
         loader.resolve = patch(loader.resolve);
         loader.createDetachedContainer = patch(loader.createDetachedContainer);
         loader.rehydrateDetachedContainerFromSnapshot = patch(loader.rehydrateDetachedContainerFromSnapshot);
-        /* eslint-enable @typescript-eslint/unbound-method */
     }
 
     /**

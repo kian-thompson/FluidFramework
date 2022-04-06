@@ -5,7 +5,6 @@
 
 import { ILoaderOptions } from "@fluidframework/container-definitions";
 import { IContainerRuntimeOptions } from "@fluidframework/container-runtime";
-import { ConfigTypes } from "@fluidframework/telemetry-utils";
 import { TestDriverTypes } from "@fluidframework/test-driver-definitions";
 import { OptionsMatrix } from "@fluidframework/test-pairwise-generator";
 
@@ -44,7 +43,6 @@ export interface ILoadTestConfig {
 }
 
 export interface OptionOverride{
-    loader?: Partial<OptionsMatrix<ILoaderOptions>>;
-    container?: Partial<OptionsMatrix<IContainerRuntimeOptions>>;
-    configurations?: OptionsMatrix<Record<string, ConfigTypes>>;
+    loader?: Partial<OptionsMatrix<ILoaderOptions>>,
+    container?: Partial<OptionsMatrix<IContainerRuntimeOptions>>
 }

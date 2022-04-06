@@ -24,9 +24,6 @@ import {
     isContainerSummary,
     IRepositoryManager,
     IFileSystemManager,
-    IFileSystemManagerFactory,
-    Constants,
-    getRepoManagerParamsFromRequest,
 } from "../utils";
 import { handleResponse } from "./utils";
 
@@ -137,7 +134,7 @@ async function deleteSummary(
 
 export function create(
     store: Provider,
-    fileSystemManagerFactory: IFileSystemManagerFactory,
+    fileSystemManager: IFileSystemManager,
     repoManagerFactory: IRepositoryManagerFactory,
 ): Router {
     const router: Router = Router();
@@ -148,25 +145,24 @@ export function create(
      * If sha is "latest", returns latest summary for owner/repo.
      */
     router.get("/repos/:owner/:repo/git/summaries/:sha", async (request, response) => {
-        const storageRoutingId: string = request.get(Constants.StorageRoutingIdHeader);
+        const storageRoutingId: string = request.get("Storage-Routing-Id");
         const [tenantId,documentId] = storageRoutingId.split(":");
         if (!documentId) {
-            handleResponse(
-                Promise.reject(new NetworkError(400, `Invalid ${Constants.StorageRoutingIdHeader} header`)),
-                response);
+            handleResponse(Promise.reject(new NetworkError(400, "Invalid Storage-Routing-Id header")), response);
             return;
         }
-        const repoManagerParams = getRepoManagerParamsFromRequest(request);
-        const resultP = repoManagerFactory.open(repoManagerParams)
-            .then(async (repoManager) => getSummary(
-                repoManager,
-                fileSystemManagerFactory.create(repoManagerParams.fileSystemManagerParams),
-                request.params.sha,
-                documentId,
-                tenantId,
-                getExternalWriterParams(request.query?.config as string | undefined),
-                persistLatestFullSummary,
-            ));
+        const resultP = repoManagerFactory.open(
+            request.params.owner,
+            request.params.repo,
+        ).then(async (repoManager) => getSummary(
+            repoManager,
+            fileSystemManager,
+            request.params.sha,
+            documentId,
+            tenantId,
+            getExternalWriterParams(request.query?.config as string | undefined),
+            persistLatestFullSummary,
+        ));
         handleResponse(resultP, response);
     });
 
@@ -174,26 +170,25 @@ export function create(
      * Creates a new summary.
      */
     router.post("/repos/:owner/:repo/git/summaries", async (request, response) => {
-        const storageRoutingId: string = request.get(Constants.StorageRoutingIdHeader);
+        const storageRoutingId: string = request.get("Storage-Routing-Id");
         const [tenantId,documentId] = storageRoutingId.split(":");
         if (!documentId) {
-            handleResponse(
-                Promise.reject(new NetworkError(400, `Invalid ${Constants.StorageRoutingIdHeader} header`)),
-                response);
+            handleResponse(Promise.reject(new NetworkError(400, "Invalid Storage-Routing-Id header")), response);
             return;
         }
-        const repoManagerParams = getRepoManagerParamsFromRequest(request);
         const wholeSummaryPayload: IWholeSummaryPayload = request.body;
-        const resultP = repoManagerFactory.open(repoManagerParams)
-            .then(async (repoManager): Promise<IWriteSummaryResponse | IWholeFlatSummary> => createSummary(
-                repoManager,
-                fileSystemManagerFactory.create(repoManagerParams.fileSystemManagerParams),
-                wholeSummaryPayload,
-                documentId,
-                tenantId,
-                getExternalWriterParams(request.query?.config as string | undefined),
-                persistLatestFullSummary,
-            ));
+        const resultP = repoManagerFactory.open(
+            request.params.owner,
+            request.params.repo,
+        ).then(async (repoManager): Promise<IWriteSummaryResponse | IWholeFlatSummary> => createSummary(
+            repoManager,
+            fileSystemManager,
+            wholeSummaryPayload,
+            documentId,
+            tenantId,
+            getExternalWriterParams(request.query?.config as string | undefined),
+            persistLatestFullSummary,
+        ));
         handleResponse(resultP, response, 201);
     });
 
@@ -202,26 +197,25 @@ export function create(
      * If header Soft-Delete="true", only flags summary as deleted.
      */
     router.delete("/repos/:owner/:repo/git/summaries", async (request, response) => {
-        const storageRoutingId: string = request.get(Constants.StorageRoutingIdHeader);
+        const storageRoutingId: string = request.get("Storage-Routing-Id");
         const [tenantId,documentId] = storageRoutingId.split(":");
         if (!documentId) {
-            handleResponse(
-                Promise.reject(new NetworkError(400, `Invalid ${Constants.StorageRoutingIdHeader} header`)),
-                response);
+            handleResponse(Promise.reject(new NetworkError(400, "Invalid Storage-Routing-Id header")), response);
             return;
         }
-        const repoManagerParams = getRepoManagerParamsFromRequest(request);
         const softDelete = request.get("Soft-Delete")?.toLowerCase() === "true";
-        const resultP = repoManagerFactory.open(repoManagerParams)
-            .then(async (repoManager) => deleteSummary(
-                repoManager,
-                fileSystemManagerFactory.create(repoManagerParams.fileSystemManagerParams),
-                documentId,
-                tenantId,
-                softDelete,
-                getExternalWriterParams(request.query?.config as string | undefined),
-                persistLatestFullSummary,
-            ));
+        const resultP = repoManagerFactory.open(
+            request.params.owner,
+            request.params.repo,
+        ).then(async (repoManager) => deleteSummary(
+            repoManager,
+            fileSystemManager,
+            documentId,
+            tenantId,
+            softDelete,
+            getExternalWriterParams(request.query?.config as string | undefined),
+            persistLatestFullSummary,
+        ));
         handleResponse(resultP, response, 204);
     });
 

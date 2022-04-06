@@ -6,11 +6,6 @@
 import fsPromises from "fs/promises";
 import * as git from "@fluidframework/gitresources";
 
-export enum Constants {
-    StorageRoutingIdHeader = "Storage-Routing-Id",
-    StorageNameHeader = "Storage-Name",
-}
-
 export interface IExternalWriterConfig {
     enabled: boolean;
 }
@@ -60,29 +55,15 @@ export interface IFileSystemManager {
     promises: IFileSystemPromises;
 }
 
-export interface IFileSystemManagerParams {
-    storageName?: string;
-}
-
-export interface IFileSystemManagerFactory {
-    create(fileSystemManagerParams?: IFileSystemManagerParams): IFileSystemManager;
-}
-
-export interface IRepoManagerParams {
-    repoOwner: string;
-    repoName: string;
-    fileSystemManagerParams?: IFileSystemManagerParams;
-}
-
 export interface IRepositoryManagerFactory {
     /**
      * Create a new repository and return its manager instance.
      */
-    create(params: IRepoManagerParams): Promise<IRepositoryManager>;
+    create(repoOwner: string, repoName: string): Promise<IRepositoryManager>;
     /**
      * Open an existing repository and return its manager instance.
      */
-    open(params: IRepoManagerParams): Promise<IRepositoryManager>;
+    open(repoOwner: string, repoName: string): Promise<IRepositoryManager>;
 }
 
 // 100644 for file (blob)

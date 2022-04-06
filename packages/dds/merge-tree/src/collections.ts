@@ -190,7 +190,6 @@ export class Heap<T> {
         this.fixup(this.count());
     }
 
-    /* eslint-disable no-bitwise */
     private fixup(k: number) {
         let _k = k;
         while (_k > 1 && (this.comp.compare(this.L[_k >> 1], this.L[_k]) > 0)) {
@@ -217,7 +216,6 @@ export class Heap<T> {
             _k = j;
         }
     }
-    /* eslint-enable no-bitwise */
 }
 
 export const enum RBColor {

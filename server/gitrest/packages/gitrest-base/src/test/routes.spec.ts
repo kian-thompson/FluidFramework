@@ -4,6 +4,7 @@
  */
 
 import assert from "assert";
+import fs from "fs";
 import {
     ICreateBlobParams,
     ICreateBlobResponse,
@@ -21,7 +22,7 @@ import sillyname from "sillyname";
 import request from "supertest";
 import * as app from "../app";
 import { ExternalStorageManager } from "../externalStorageManager";
-import { NodeFsManagerFactory, NodegitRepositoryManagerFactory } from "../utils";
+import { NodegitRepositoryManagerFactory } from "../utils";
 import * as testUtils from "./utils";
 
 // TODO: (issue logged): replace email & name
@@ -146,11 +147,10 @@ describe("GitRest", () => {
             sha: "cf0b592907d683143b28edd64d274ca70f68998e",
         };
 
-        const fileSystemManagerFactory = new NodeFsManagerFactory();
         const externalStorageManager = new ExternalStorageManager(testUtils.defaultProvider);
         const getRepoManagerFactory = () => new NodegitRepositoryManagerFactory(
             testUtils.defaultProvider.get("storageDir"),
-            fileSystemManagerFactory,
+            fs,
             externalStorageManager,
         );
 
@@ -160,7 +160,7 @@ describe("GitRest", () => {
         let supertest: request.SuperTest<request.Test>;
         beforeEach(() => {
             const repoManagerFactory = getRepoManagerFactory();
-            const testApp = app.create(testUtils.defaultProvider, fileSystemManagerFactory, repoManagerFactory);
+            const testApp = app.create(testUtils.defaultProvider, fs, repoManagerFactory);
             supertest = request(testApp);
         });
 
@@ -424,10 +424,7 @@ describe("GitRest", () => {
 
                 await initBaseRepo(supertest, testOwnerName, testRepoName, testBlob, testTree, testCommit, testRef);
                 const repoManagerFactory = getRepoManagerFactory();
-                const repoManager = await repoManagerFactory.open({
-                    repoOwner: testOwnerName,
-                    repoName: testRepoName,
-                });
+                const repoManager = await repoManagerFactory.open(testOwnerName, testRepoName);
 
                 let lastCommit;
 

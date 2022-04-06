@@ -4,16 +4,12 @@
  */
 
 import * as resources from "@fluidframework/gitresources";
-import Axios, { AxiosRequestHeaders } from "axios";
+import Axios from "axios";
 
-export async function getOrCreateRepository(
-    endpoint: string,
-    owner: string,
-    repository: string,
-    headers?: AxiosRequestHeaders): Promise<void> {
+export async function getOrCreateRepository(endpoint: string, owner: string, repository: string): Promise<void> {
     console.log(`Get Repo: ${endpoint}/${owner}/${repository}`);
 
-    const details = await Axios.get(`${endpoint}/repos/${owner}/${repository}`, { headers })
+    const details = await Axios.get(`${endpoint}/repos/${owner}/${repository}`)
         .catch((error) => {
             if (error.response && error.response.status === 400) {
                 return null;
@@ -28,6 +24,6 @@ export async function getOrCreateRepository(
             name: repository,
         };
 
-        await Axios.post(`${endpoint}/${owner}/repos`, createParams, { headers });
+        await Axios.post(`${endpoint}/${owner}/repos`, createParams);
     }
 }

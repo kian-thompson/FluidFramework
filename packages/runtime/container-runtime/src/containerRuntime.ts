@@ -2042,12 +2042,11 @@ export class ContainerRuntime extends TypedEventEmitter<IContainerRuntimeEvents>
             gcStats = await this.collectGarbage({ logger: summaryLogger, runSweep, fullGC });
         }
 
-        const { stats, summary } = await this.summarizerNode.summarize(fullTree, trackState);
-
-        assert(summary.type === SummaryType.Tree,
+        const summarizeResult = await this.summarizerNode.summarize(fullTree, trackState);
+        assert(summarizeResult.summary.type === SummaryType.Tree,
             0x12f /* "Container Runtime's summarize should always return a tree" */);
 
-        return { stats, summary, gcStats };
+        return { ...summarizeResult, gcStats } as IRootSummaryTreeWithStats;
     }
 
     /**
