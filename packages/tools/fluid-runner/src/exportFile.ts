@@ -6,13 +6,12 @@
 import * as fs from "fs";
 import path from "path";
 import { ITelemetryLogger } from "@fluidframework/common-definitions";
-import { Loader } from "@fluidframework/container-loader";
 import { createLocalOdspDocumentServiceFactory } from "@fluidframework/odsp-driver";
 import { ChildLogger, PerformanceEvent } from "@fluidframework/telemetry-utils";
 // eslint-disable-next-line import/no-internal-modules
 import { FileLogger } from "./logger/FileLogger";
 import { getArgsValidationError } from "./getArgsValidationError";
-import { IFluidFileConverter, isCodeLoaderBundle } from "./codeLoaderBundle";
+import { isOtherBundle, LoadContainerInDivBundle } from "./codeLoaderBundle";
 import { FakeUrlResolver } from "./fakeUrlResolver";
 
 export type IExportFileResponse = IExportFileResponseSuccess | IExportFileResponseFailure;
@@ -46,7 +45,7 @@ export async function exportFile(
         await PerformanceEvent.timedExecAsync(logger, { eventName: "ExportFile" }, async () => {
             // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
             const codeLoaderBundle = require(codeLoader);
-            if (!isCodeLoaderBundle(codeLoaderBundle)) {
+            if (!isOtherBundle(codeLoaderBundle)) {
                 const message = "Code loader bundle is not of type CodeLoaderBundle";
                 logger.sendErrorEvent({
                     eventName: "Client_ArgsValidationError",
@@ -70,7 +69,7 @@ export async function exportFile(
             const results = await createContainerAndExecute(
                 inputFileContent,
                 logger,
-                await codeLoaderBundle.fluidExport,
+                codeLoaderBundle,
             );
             // eslint-disable-next-line guard-for-in, no-restricted-syntax
             for (const key in results) {
@@ -90,17 +89,17 @@ export async function exportFile(
 export async function createContainerAndExecute(
     localOdspSnapshot: string,
     logger: ITelemetryLogger,
-    fluidFileConverter: IFluidFileConverter,
+    otherBundle: LoadContainerInDivBundle,
 ): Promise<Record<string, string>> {
-    const loader = new Loader({
-        urlResolver: new FakeUrlResolver(),
+    const result = await otherBundle.loadComponentInDiv({
         documentServiceFactory: createLocalOdspDocumentServiceFactory(localOdspSnapshot),
-        codeLoader: fluidFileConverter.codeLoader,
-        scope: fluidFileConverter.scope,
+        urlResolver: new FakeUrlResolver(),
+        scope: {},
+        containerRequest: {},
     });
+    if ((await result.container).isDirty) {
+        // something
+    }
 
-    const container = await loader.resolve({ url: "/fakeUrl/" });
-
-    return PerformanceEvent.timedExecAsync(logger, { eventName: "ExportFile" }, async () =>
-        fluidFileConverter.execute(container, logger));
+    return { "file1.txt": "some output", "file2.txt": "some other output" };
 }

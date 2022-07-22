@@ -3,32 +3,6 @@
  * Licensed under the MIT License.
  */
 
-import { ICodeDetailsLoader, IContainer, IFluidModuleWithDetails } from "@fluidframework/container-definitions";
-import { BaseContainerRuntimeFactory } from "@fluidframework/aqueduct";
-import { ITelemetryBaseLogger } from "@fluidframework/common-definitions";
-import { IFluidFileConverter } from "../codeLoaderBundle";
-
-async function getCodeLoader(): Promise<ICodeDetailsLoader> {
-    return {
-        load: async (): Promise<IFluidModuleWithDetails> => {
-            return {
-                module: { fluidExport: new BaseContainerRuntimeFactory(new Map()) },
-                details: { package: "no-dynamic-package", config: {} },
-            };
-        },
-    };
+export async function something(): Promise<number> {
+    return 1;
 }
-
-async function execute(_container: IContainer, _logger: ITelemetryBaseLogger): Promise<Record<string, string>> {
-    return { "result.txt": "sample result" };
-}
-
-async function getFluidExport(): Promise<IFluidFileConverter> {
-    return {
-        codeLoader: await getCodeLoader(),
-        scope: undefined,
-        execute,
-    };
-}
-
-export const fluidExport = getFluidExport();

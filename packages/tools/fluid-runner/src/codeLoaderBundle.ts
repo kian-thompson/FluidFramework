@@ -5,7 +5,7 @@
 
 import { ITelemetryBaseLogger } from "@fluidframework/common-definitions";
 import { ICodeDetailsLoader, IContainer } from "@fluidframework/container-definitions";
-import { FluidObject } from "@fluidframework/core-interfaces";
+import { FluidObject, IFluidObject } from "@fluidframework/core-interfaces";
 
 /**
  * Contract that defines the necessary exports for the bundle provided at runtime
@@ -48,4 +48,39 @@ export interface IFluidFileConverter {
 export function isCodeLoaderBundle(bundle: any): bundle is ICodeLoaderBundle {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return bundle?.fluidExport && typeof bundle.fluidExport === "object";
+}
+
+interface LoadedInfo {
+    /**
+     * Promise of IFluidObject contracts available on the component.
+     */
+    component: Promise<IFluidObject>;
+
+    /**
+     * Lifecycle container contracts available on the container.
+     */
+    container: Promise<IContainer>;
+}
+
+export interface LoadContainerInDivBundle {
+    loadComponentInDiv({ documentServiceFactory, urlResolver, scope, containerRequest }): Promise<LoadedInfo>;
+}
+
+export function isOtherBundle(bundle: any): bundle is LoadContainerInDivBundle {
+    if (!bundle) {
+        console.log("undefined");
+    } else {
+        console.log(JSON.stringify(bundle));
+    }
+    if (bundle.save) {
+        console.log("found other");
+    }
+    if (bundle?.loadComponentInDiv) {
+        console.log("found");
+        console.log(typeof bundle.loadComponentInDiv);
+    } else {
+        console.log("not found");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return bundle?.loadComponentInDiv && typeof bundle.loadComponentInDiv === "function";
 }
