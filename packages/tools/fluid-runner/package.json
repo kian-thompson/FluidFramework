@@ -16,7 +16,7 @@
     "fluid-runner": "bin/fluidRunner"
   },
   "scripts": {
-    "build": "concurrently npm:build:compile npm:lint",
+    "build": "concurrently npm:build:compile",
     "build:commonjs": "npm run tsc && npm run build:test",
     "build:compile": "concurrently npm:build:commonjs npm:build:esnext",
     "build:esnext": "tsc --project ./tsconfig.esnext.json",
@@ -66,6 +66,7 @@
     "@fluidframework/odsp-driver": ">=2.0.0-internal.1.0.0 <2.0.0-internal.2.0.0",
     "@fluidframework/odsp-driver-definitions": ">=2.0.0-internal.1.0.0 <2.0.0-internal.2.0.0",
     "@fluidframework/telemetry-utils": ">=2.0.0-internal.1.0.0 <2.0.0-internal.2.0.0",
+    "@ms/bohemia-codeloader": "0.91.11",
     "yargs": "13.2.2"
   },
   "devDependencies": {

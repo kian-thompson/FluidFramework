@@ -44,6 +44,7 @@ function fluidRunner() {
                     }),
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             async (argv) => {
+                console.log("before");
                 const result = await exportFile(
                     argv.codeLoader,
                     argv.inputFile,
@@ -51,6 +52,8 @@ function fluidRunner() {
                     argv.scenario,
                     argv.telemetryFile,
                 );
+                console.log("after");
+                console.log(result);
                 if (!result.success) {
                     console.error(result.errorMessage);
                     process.exit(1);

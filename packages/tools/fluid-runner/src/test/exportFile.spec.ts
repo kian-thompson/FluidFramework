@@ -25,8 +25,8 @@ describe("exportFile", () => {
             });
 
             it("AAAAA", async () => {
-                await exportFile(
-                    "C:\\Users\\kianthompson\\Documents\\RandomFiles\\eDiscovery.node.js",
+                const result = await exportFile(
+                    "C:\\Users\\kianthompson\\Downloads\\BohemiaCodeLoader.node.js",
                     // eslint-disable-next-line max-len
                     "C:\\Users\\kianthompson\\Documents\\FluidFrameworkMain\\packages\\tools\\fluid-runner\\src\\test\\localOdspSnapshots\\odspSnapshot2.json",
                     outputFolder,
@@ -34,18 +34,18 @@ describe("exportFile", () => {
                     path.join(outputFolder, "telemetry.txt"),
                 );
 
-                assert(true, "result file does not exist");
-            });
+                assert(result.success, "result file does not exist");
+            }).timeout(30000);
 
-            it("BBBBB", async () => {
-                await exportFile(
-                    path.join(__dirname, "sampleCodeLoader.js"),
-                    path.join(snapshotFolder, snapshotFileName),
-                    outputFolder,
-                    "sampleScenario",
-                    path.join(outputFolder, "telemetry.txt"),
-                );
-            });
+            // it("BBBBB", async () => {
+            //     await exportFile(
+            //         path.join(__dirname, "sampleCodeLoader.js"),
+            //         path.join(snapshotFolder, snapshotFileName),
+            //         outputFolder,
+            //         "sampleScenario",
+            //         path.join(outputFolder, "telemetry.txt"),
+            //     );
+            // });
 
             // it("Output file is correct", async () => {
             //     await exportFile(

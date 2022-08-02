@@ -62,11 +62,11 @@ interface LoadedInfo {
     container: Promise<IContainer>;
 }
 
-export interface LoadContainerInDivBundle {
+export interface OtherBundle {
     loadComponentInDiv({ documentServiceFactory, urlResolver, scope, containerRequest }): Promise<LoadedInfo>;
 }
 
-export function isOtherBundle(bundle: any): bundle is LoadContainerInDivBundle {
+export function isOtherBundle(bundle: any): bundle is OtherBundle {
     if (!bundle) {
         console.log("undefined");
     } else {
