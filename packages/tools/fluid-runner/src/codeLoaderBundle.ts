@@ -61,26 +61,3 @@ interface LoadedInfo {
      */
     container: Promise<IContainer>;
 }
-
-export interface OtherBundle {
-    loadComponentInDiv({ documentServiceFactory, urlResolver, scope, containerRequest }): Promise<LoadedInfo>;
-}
-
-export function isOtherBundle(bundle: any): bundle is OtherBundle {
-    if (!bundle) {
-        console.log("undefined");
-    } else {
-        console.log(JSON.stringify(bundle));
-    }
-    if (bundle.save) {
-        console.log("found other");
-    }
-    if (bundle?.loadComponentInDiv) {
-        console.log("found");
-        console.log(typeof bundle.loadComponentInDiv);
-    } else {
-        console.log("not found");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return bundle?.loadComponentInDiv && typeof bundle.loadComponentInDiv === "function";
-}

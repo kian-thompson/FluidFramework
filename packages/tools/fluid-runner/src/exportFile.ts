@@ -53,24 +53,13 @@ export async function exportFile(
             const fetch = require("node-fetch");
 
             var htmlPage = '<html><title>My Title</title><body><div></div></body></html>';
-            // const jsDOMObject = new JSDOM(htmlPage).window;
-            // jsDOMObject.performance = performance;
             const window = new JSDOM(htmlPage).window;
             global.document = window.document;
             global.performance = performance;
             global.fetch = fetch;
-            performance.now();
 
             // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
             const codeLoaderBundle = require(codeLoader);
-            // if (!isOtherBundle(codeLoaderBundle)) {
-            //     const message = "Code loader bundle is not of type CodeLoaderBundle";
-            //     logger.sendErrorEvent({
-            //         eventName: "Client_ArgsValidationError",
-            //         message,
-            //     });
-            //     return { success: false, errorMessage: message };
-            // }
 
             const argsValidationError = getArgsValidationError(inputFile, outputFolder, scenario);
             if (argsValidationError) {
@@ -87,14 +76,12 @@ export async function exportFile(
             const results = await createContainerAndExecute(
                 inputFileContent,
                 logger,
-                // await codeLoaderBundle.fluidExport,
                 new codeLoaderBundle.BohemiaCodeLoader(
                     {
                         windowContext: window,
                         containerEnvironment: "Staging",
                         logger: logger,
-                        additionalAllowedCodeOrigins: ["dist/main.bundle.js"],
-                      }
+                    }
                 ),
             );
             // eslint-disable-next-line guard-for-in, no-restricted-syntax
@@ -115,25 +102,19 @@ export async function exportFile(
 export async function createContainerAndExecute(
     localOdspSnapshot: string,
     logger: ITelemetryLogger,
-    // otherBundle: IFluidFileConverter,
     codeLoader: ICodeDetailsLoader,
 ): Promise<Record<string, string>> {
     const loader = new Loader({
         urlResolver: new FakeUrlResolver(),
         documentServiceFactory: createLocalOdspDocumentServiceFactory(localOdspSnapshot),
-        // codeLoader: new BohemiaCodeLoader({
-        //     windowContext: new Window(),
-        //     containerEnvironment: ContainerEnvironment.Prod,
-        // }),
         codeLoader,
+        logger,
     });
 
-    console.log("1");
     const container = await loader.resolve({ url: "/fakeUrl/", headers: {
         [LoaderHeader.loadMode]: { opsBeforeReturn: "cached" } } });
-    console.log("2");
     if (container.isDirty) {
-        // asd
+        // to prevent compile error of unused
     }
 
     return { "file1.txt": "some output", "file2.txt": "some other output" };
