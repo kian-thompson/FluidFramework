@@ -218,6 +218,7 @@ const chunkToBatchMessage = (
 	};
 	return {
 		contents: JSON.stringify(payload),
+		type: payload.type,
 		deserializedContent: payload,
 		metadata,
 		localOpMetadata: undefined,
@@ -255,7 +256,7 @@ export const splitOp = (
 		const chunk: IChunkedOp = {
 			chunkId,
 			contents: op.contents.substr(offset, chunkSizeInBytes),
-			originalType: op.deserializedContent.type,
+			originalType: op.type,
 			totalChunks: chunkCount,
 		};
 

@@ -12,6 +12,8 @@ import { CompressionAlgorithms, ContainerMessageType, ContainerRuntimeMessage } 
  */
 export type BatchMessage = IBatchMessage & {
 	localOpMetadata: unknown;
+	type: ContainerMessageType;
+	/** @deprecated - TODO */
 	deserializedContent: ContainerRuntimeMessage;
 	referenceSequenceNumber: number;
 	compression?: CompressionAlgorithms;

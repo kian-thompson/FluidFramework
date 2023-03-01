@@ -122,6 +122,7 @@ describe("Outbox", () => {
 		const deserializedContent: ContainerRuntimeMessage = { type, contents };
 		return {
 			contents: JSON.stringify(deserializedContent),
+			type,
 			deserializedContent,
 			metadata: { test: true },
 			localOpMetadata: {},

@@ -440,6 +440,7 @@ describe("OpSplitter", () => {
 		const contents = { value: crypto.randomBytes(contentSizeInBytes / 2).toString("hex") };
 		return {
 			localOpMetadata: undefined,
+			type: ContainerMessageType.FluidDataStoreOp,
 			deserializedContent: {
 				contents,
 				type: ContainerMessageType.FluidDataStoreOp,
