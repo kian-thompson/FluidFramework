@@ -30,10 +30,6 @@ describe("OpCompressor", () => {
 		localOpMetadata: undefined,
 		type: ContainerMessageType.FluidDataStoreOp,
 		contents,
-		deserializedContent: {
-			contents,
-			type: ContainerMessageType.FluidDataStoreOp,
-		},
 		referenceSequenceNumber: 0,
 	});
 	const generateStringOfSize = (sizeInBytes: number): string =>

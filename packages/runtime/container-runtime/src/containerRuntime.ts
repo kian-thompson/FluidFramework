@@ -2818,7 +2818,6 @@ export class ContainerRuntime
 		const message: BatchMessage = {
 			contents: serializedContent,
 			type,
-			deserializedContent: JSON.parse(serializedContent), // Deep copy in case caller changes reference object
 			metadata,
 			localOpMetadata,
 			referenceSequenceNumber: this.deltaManager.lastSequenceNumber,

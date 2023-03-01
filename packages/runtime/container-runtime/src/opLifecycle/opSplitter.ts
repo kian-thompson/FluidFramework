@@ -219,7 +219,6 @@ const chunkToBatchMessage = (
 	return {
 		contents: JSON.stringify(payload),
 		type: payload.type,
-		deserializedContent: payload,
 		metadata,
 		localOpMetadata: undefined,
 		referenceSequenceNumber,

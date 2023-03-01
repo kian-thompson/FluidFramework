@@ -5,7 +5,7 @@
 
 import { IBatchMessage } from "@fluidframework/container-definitions";
 import { ISequencedDocumentMessage, MessageType } from "@fluidframework/protocol-definitions";
-import { CompressionAlgorithms, ContainerMessageType, ContainerRuntimeMessage } from "..";
+import { CompressionAlgorithms, ContainerMessageType } from "..";
 
 /**
  * Batch message type used internally by the runtime
@@ -13,8 +13,6 @@ import { CompressionAlgorithms, ContainerMessageType, ContainerRuntimeMessage } 
 export type BatchMessage = IBatchMessage & {
 	localOpMetadata: unknown;
 	type: ContainerMessageType;
-	/** @deprecated - TODO */
-	deserializedContent: ContainerRuntimeMessage;
 	referenceSequenceNumber: number;
 	compression?: CompressionAlgorithms;
 };
