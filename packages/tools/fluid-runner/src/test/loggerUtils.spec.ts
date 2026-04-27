@@ -9,7 +9,7 @@ import path from "path";
 /* eslint-disable import-x/no-internal-modules */
 import { OutputFormat } from "../logger/fileLogger.js";
 import {
-	createLogger,
+	createFluidRunnerLogger,
 	getTelemetryFileValidationError,
 	validateAndParseTelemetryOptions,
 } from "../logger/loggerUtils.js";
@@ -176,7 +176,7 @@ describe("logger utils", () => {
 	describe("createLogger", () => {
 		[-1, 0, 1, 25].forEach((eventsPerFlush) => {
 			it(`sets eventsPerFlush [${eventsPerFlush}] properly`, () => {
-				const { fileLogger } = createLogger("fake/path", {
+				const { fileLogger } = createFluidRunnerLogger("fake/path", {
 					outputFormat: OutputFormat.CSV,
 					eventsPerFlush,
 				});
