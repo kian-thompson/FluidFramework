@@ -15,7 +15,7 @@ export {
 export { fluidRunner } from "./fluidRunner.js";
 export {
 	OutputFormat,
-	type ITelemetryOptions,
+	type IFileLoggerTelemetryOptions,
 	type IFileLogger,
 } from "./logger/fileLogger.js";
 export {

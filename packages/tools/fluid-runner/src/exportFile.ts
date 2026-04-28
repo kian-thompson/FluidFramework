@@ -18,7 +18,7 @@ import { createChildLogger, PerformanceEvent } from "@fluidframework/telemetry-u
 import type { IFluidFileConverter } from "./codeLoaderBundle.js";
 import { FakeUrlResolver } from "./fakeUrlResolver.js";
 /* eslint-disable import-x/no-internal-modules */
-import type { ITelemetryOptions } from "./logger/fileLogger.js";
+import type { IFileLoggerTelemetryOptions } from "./logger/fileLogger.js";
 import {
 	createFluidRunnerLogger,
 	getTelemetryFileValidationError,
@@ -61,7 +61,7 @@ export async function exportFile(
 	outputFile: string,
 	telemetryFile: string,
 	options?: string,
-	telemetryOptions?: ITelemetryOptions,
+	telemetryOptions?: IFileLoggerTelemetryOptions,
 	timeout?: number,
 	disableNetworkFetch?: boolean,
 ): Promise<IExportFileResponse> {
@@ -124,7 +124,7 @@ export async function exportFile(
  * @param localOdspSnapshot - The ODSP snapshot to load the container from. May be either the JSON snapshot
  * as a string or the binary snapshot as a `Uint8Array`.
  * @param fluidFileConverter - Caller-provided code loader and execution logic. See {@link IFluidFileConverter}.
- * @param logger - Telemetry logger that will receive events emitted during load and execution. Typically
+ * @param baseLogger - Telemetry logger that will receive events emitted during load and execution. Typically
  * obtained from {@link createFluidRunnerLogger}.
  * @param options - Opaque, caller-defined string passed through to {@link IFluidFileConverter.execute}.
  * @param timeout - Optional timeout in milliseconds. If the operation does not complete within this period
@@ -139,12 +139,12 @@ export async function exportFile(
 export async function createFluidRunnerContainerAndExecute(
 	localOdspSnapshot: string | Uint8Array,
 	fluidFileConverter: IFluidFileConverter,
-	logger: ITelemetryBaseLogger,
+	baseLogger: ITelemetryBaseLogger,
 	options?: string,
 	timeout?: number,
 	disableNetworkFetch: boolean = false,
 ): Promise<string> {
-	const extLogger = createChildLogger({ logger });
+	const logger = createChildLogger({ logger: baseLogger });
 	const fn = async (): Promise<string> => {
 		if (disableNetworkFetch) {
 			global.fetch = async () => {
@@ -171,17 +171,13 @@ export async function createFluidRunnerContainerAndExecute(
 		});
 		await waitContainerToCatchUp(container);
 
-		return PerformanceEvent.timedExecAsync(
-			extLogger,
-			{ eventName: "ExportFile" },
-			async () => {
-				try {
-					return await fluidFileConverter.execute(container, options);
-				} finally {
-					container.dispose();
-				}
-			},
-		);
+		return PerformanceEvent.timedExecAsync(logger, { eventName: "ExportFile" }, async () => {
+			try {
+				return await fluidFileConverter.execute(container, options);
+			} finally {
+				container.dispose();
+			}
+		});
 	};
 
 	// eslint-disable-next-line unicorn/prefer-ternary

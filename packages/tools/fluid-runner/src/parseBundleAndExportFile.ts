@@ -14,7 +14,7 @@ import {
 	createFluidRunnerContainerAndExecute,
 } from "./exportFile.js";
 /* eslint-disable import-x/no-internal-modules */
-import type { ITelemetryOptions } from "./logger/fileLogger.js";
+import type { IFileLoggerTelemetryOptions } from "./logger/fileLogger.js";
 import {
 	createFluidRunnerLogger,
 	getTelemetryFileValidationError,
@@ -35,7 +35,7 @@ export async function parseBundleAndExportFile(
 	outputFile: string,
 	telemetryFile: string,
 	options?: string,
-	telemetryOptions?: ITelemetryOptions,
+	telemetryOptions?: IFileLoggerTelemetryOptions,
 	timeout?: number,
 	disableNetworkFetch?: boolean,
 ): Promise<IExportFileResponse> {

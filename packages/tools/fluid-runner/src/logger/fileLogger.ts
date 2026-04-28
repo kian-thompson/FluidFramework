@@ -31,7 +31,7 @@ export enum OutputFormat {
  * @legacy
  * @beta
  */
-export interface ITelemetryOptions {
+export interface IFileLoggerTelemetryOptions {
 	/** Desired output format used to create a specific IFileLogger implementation */
 	outputFormat?: OutputFormat;
 

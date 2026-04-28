@@ -173,7 +173,7 @@ describe("logger utils", () => {
 		});
 	});
 
-	describe("createLogger", () => {
+	describe("createFluidRunnerLogger", () => {
 		[-1, 0, 1, 25].forEach((eventsPerFlush) => {
 			it(`sets eventsPerFlush [${eventsPerFlush}] properly`, () => {
 				const { fileLogger } = createFluidRunnerLogger("fake/path", {
